@@ -2,16 +2,18 @@ package matricula;
 
 import util.ConnectionFactoryMatricula;
 import java.sql.*;
+import aluno.AlunoDAO;
+import curso.CursoDAO;
 
 public class MatriculaDAO {
 
     public void matricular(int alunoId, String nomeAluno,
-                           int cursoId, String nomeCurso) {
+            int cursoId, String nomeCurso) {
 
         String sql = "INSERT INTO matricula(aluno_id, nome_aluno, curso_id, nome_curso) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = ConnectionFactoryMatricula.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, alunoId);
             stmt.setString(2, nomeAluno);
@@ -30,7 +32,7 @@ public class MatriculaDAO {
                 return;
             }
 
-            if (!alunoDAO.alunoEstaAtivo(alunoId)) {
+            if (!AlunoDAO.alunoEstaAtivo(alunoId)) {
                 System.out.println("Erro: Aluno inativo, não pode ser matriculado!");
                 return;
             }
@@ -52,19 +54,19 @@ public class MatriculaDAO {
         }
     }
 
-    public boolean existeMatriculaAtiva(int alunoId, int cursoId){
+    public boolean existeMatriculaAtiva(int alunoId, int cursoId) {
         String sql = "SELECT COUNT(id) FROM matricula WHERE aluno_id = ? and curso_id = ? and status = 'ATIVO'";
-        //criar campo status
-        try(Connection conn = ConnectionFactoryMatricula.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()){
+        // criar campo status
+        try (Connection conn = ConnectionFactoryMatricula.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
             stmt.setInt(1, alunoId);
             stmt.setInt(2, cursoId);
 
-            try(ResultSet rs = stmt.executeQuery()){
-                if(rs > 0){
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs > 0) {
                     return true;
-                }else{
+                } else {
                     return false;
                 }
             }
@@ -107,15 +109,14 @@ public class MatriculaDAO {
         String sql = "SELECT * FROM matricula";
 
         try (Connection conn = ConnectionFactoryMatricula.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 System.out.println(
-                    rs.getString("nome_aluno") +
-                    " → " +
-                    rs.getString("nome_curso")
-                );
+                        rs.getString("nome_aluno") +
+                                " → " +
+                                rs.getString("nome_curso"));
             }
 
         } catch (Exception e) {

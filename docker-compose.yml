@@ -1,0 +1,26 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_poo2
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-init/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin_poo2
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_ARBITRARY: 1
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
